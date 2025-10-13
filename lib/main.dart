@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rick_and_morty_character_info/app/app.dart';
+import 'package:rick_and_morty_character_info/features/home/domain/home_view_model.dart';
 import 'package:rick_and_morty_character_info/features/home/view/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -22,8 +23,11 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        // Repositories
         Provider(create: (_) => createDio()),
         Provider(create: (context) => CharacterRepository(context.read<Dio>())),
+        // Global View Model
+        ChangeNotifierProvider(create: (_) => HomeViewModel()),
       ],
       child: const MyApp(),
     ),

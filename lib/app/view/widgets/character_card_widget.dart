@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rick_and_morty_character_info/app/domain/models/models.dart';
+import 'package:rick_and_morty_character_info/features/home/domain/home_view_model.dart';
 
 class CharacterCardWidget extends StatelessWidget {
   const CharacterCardWidget({super.key, required this.character});
@@ -11,7 +13,7 @@ class CharacterCardWidget extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          _ChapterImageWidget(imageSrc: character.image, status: character.status),
+          _ChapterImageWidget(character: character),
 
           Expanded(
             child: _ChapterInfoWidget(
@@ -71,13 +73,9 @@ class _ChapterInfoWidget extends StatelessWidget {
 }
 
 class _ChapterImageWidget extends StatelessWidget {
-  const _ChapterImageWidget({
-    required this.imageSrc,
-    required this.status,
-  });
+  const _ChapterImageWidget({required this.character});
 
-  final String imageSrc;
-  final String status;
+  final Character character;
 
   _getStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -92,6 +90,9 @@ class _ChapterImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<HomeViewModel>();
+    final isFavorite = model.isFavorite(character.id);
+    final iconColor = isFavorite ? Colors.red : Colors.white;
     return Stack(
       children: [
         // фотография персонажа
@@ -100,7 +101,7 @@ class _ChapterImageWidget extends StatelessWidget {
           child: ClipRRect(
             borderRadius: const BorderRadiusGeometry.vertical(top: Radius.circular(16)),
             child: Image.network(
-              imageSrc,
+              character.image,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return const Center(
@@ -123,13 +124,13 @@ class _ChapterImageWidget extends StatelessWidget {
           left: 5,
           child: Container(
             decoration: BoxDecoration(
-              color: _getStatusColor(status),
+              color: _getStatusColor(character.status),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
               padding: const EdgeInsets.all(3.0),
               child: Text(
-                status,
+                character.status,
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 12,
@@ -146,10 +147,11 @@ class _ChapterImageWidget extends StatelessWidget {
           child: IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            style: const ButtonStyle(
+            style: ButtonStyle(
+              iconColor: WidgetStatePropertyAll(iconColor),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            onPressed: () {},
+            onPressed: () => model.toggleFavorite(character),
             icon: const Icon(Icons.favorite),
           ),
         ),
