@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.rick_and_morty_character_info"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "23.0.7599858"
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

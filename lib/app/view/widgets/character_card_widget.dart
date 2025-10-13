@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -100,20 +101,11 @@ class _ChapterImageWidget extends StatelessWidget {
           aspectRatio: 1,
           child: ClipRRect(
             borderRadius: const BorderRadiusGeometry.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              character.image,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(
-                  child: SizedBox(child: CircularProgressIndicator()),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.error_outline, color: Colors.red, size: 50),
-                );
-              },
+            child: CachedNetworkImage(
+              imageUrl: character.image,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
         ),
