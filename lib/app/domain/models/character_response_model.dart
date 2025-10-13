@@ -58,13 +58,17 @@ class Character {
   final String name;
   final String status;
   final String species;
+  final String type;
   final String image;
+  final String origin;
 
   Character({
     required this.name,
     required this.status,
     required this.species,
+    required this.type,
     required this.image,
+    required this.origin, // Место рождения или вселенной
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -72,7 +76,9 @@ class Character {
       name: json['name'],
       status: json['status'],
       species: json['species'],
+      type: json['type'] ?? '',
       image: json['image'],
+      origin: json['origin']['name'], // Берем только название из origin объекта
     );
   }
 
@@ -81,7 +87,9 @@ class Character {
       'name': name,
       'status': status,
       'species': species,
+      'type': type,
       'image': image,
+      'origin': origin,
     };
   }
 }

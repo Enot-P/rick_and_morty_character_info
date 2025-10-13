@@ -1,8 +1,33 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:rick_and_morty_character_info/app/app.dart';
 import 'package:rick_and_morty_character_info/features/home/view/home_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  Dio createDio() {
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: 'https://rickandmortyapi.com/api/',
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+        responseType: ResponseType.json,
+      ),
+    );
+
+    dio.interceptors.add(LogInterceptor(responseBody: true)); // Для логов
+    return dio;
+  }
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(create: (_) => createDio()),
+        Provider(create: (context) => CharacterRepository(context.read<Dio>())),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
