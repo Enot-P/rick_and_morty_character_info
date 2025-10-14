@@ -5,22 +5,29 @@ import 'package:rick_and_morty_character_info/app/domain/repositories/repositori
 class CharactersListViewModel extends ChangeNotifier {
   final CharacterRepository _charRepo;
   final CacheRepository _cacheRepo;
+  final DatabaseRepository _dbRepo;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   List<Character> _characters = [];
   List<Character> get characters => List.unmodifiable(_characters);
+  List<Character> _favoritesCharacters = [];
   String? _nextPage;
   bool _hasNextPage = true;
 
-  CharactersListViewModel(this._charRepo, this._cacheRepo) {
+  CharactersListViewModel(this._charRepo, this._cacheRepo, this._dbRepo) {
     _init();
   }
   Future<void> _init() async {
     // await _cacheRepo.cleanCache();
     await _loadCacheCharacters();
     await loadNetworkCharacters();
+    await _loadFavoritesCharacters();
+  }
+
+  Future<void> _loadFavoritesCharacters() async {
+    _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
   }
 
   Future<void> _loadCacheCharacters() async {
@@ -59,5 +66,15 @@ class CharactersListViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> toggleCharacterFavorite(Character char) async {
+    await _dbRepo.toggleCharacterFavorite(char);
+    _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
+    notifyListeners();
+  }
+
+  bool isFavorite(Character char) {
+    return _favoritesCharacters.contains(char);
   }
 }

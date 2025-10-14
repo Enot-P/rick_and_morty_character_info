@@ -4,3 +4,4 @@
 
 export 'cache_repository.dart';
 export 'character_repository.dart';
+export 'database_repository.dart';

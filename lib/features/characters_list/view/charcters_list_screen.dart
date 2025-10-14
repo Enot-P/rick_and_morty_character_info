@@ -70,6 +70,7 @@ class _CharactersGridWidgetState extends State<CharactersGridWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<CharactersListViewModel>();
     return SafeArea(
       child: GridView.builder(
         padding: const EdgeInsets.all(10),
@@ -83,7 +84,13 @@ class _CharactersGridWidgetState extends State<CharactersGridWidget> {
         ),
         itemCount: widget.character.length,
         itemBuilder: (BuildContext context, int index) {
-          return CharacterCardWidget(character: widget.character[index]);
+          return CharacterCardWidget(
+            character: widget.character[index],
+            onFavoritePressed: () => model.toggleCharacterFavorite(
+              widget.character[index],
+            ),
+            isFavorite: model.isFavorite(widget.character[index]),
+          );
         },
       ),
     );

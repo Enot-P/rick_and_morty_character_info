@@ -25,8 +25,9 @@ Future<void> main() async {
         Provider(create: (_) => sharedPreferences),
         Provider(create: (context) => CharacterRepository(context.read<Dio>())),
         Provider(create: (context) => CacheRepository(context.read<SharedPreferences>())),
+        Provider(create: (context) => DatabaseRepository(context.read<SharedPreferences>())),
         // Global View Model
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => HomeViewModel()),
       ],
       child: const MyApp(),
     ),

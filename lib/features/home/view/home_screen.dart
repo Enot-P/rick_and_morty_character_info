@@ -18,10 +18,14 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => CharactersListViewModel(
         context.read<CharacterRepository>(),
         context.read<CacheRepository>(),
+        context.read<DatabaseRepository>(),
       ),
       child: const CharactersListScreen(),
     ),
-    const FavoritesListScreen(),
+    ChangeNotifierProvider(
+      create: (context) => CharactersFavoriteListViewModel(context.read<DatabaseRepository>()),
+      child: const FavoritesListScreen(),
+    ),
   ];
 
   @override

@@ -1,21 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:rick_and_morty_character_info/app/domain/models/models.dart';
-import 'package:rick_and_morty_character_info/features/home/domain/home_view_model.dart';
 
 class CharacterCardWidget extends StatelessWidget {
-  const CharacterCardWidget({super.key, required this.character});
+  const CharacterCardWidget({
+    super.key,
+    required this.character,
+    required this.onFavoritePressed,
+    required this.isFavorite,
+  });
+
   final Character character;
+  final VoidCallback onFavoritePressed;
+  final bool isFavorite;
+
   @override
   Widget build(BuildContext context) {
     final origin = character.origin == 'unknown' ? '' : character.origin;
     return Card(
       child: Column(
         children: [
-          _ChapterImageWidget(character: character),
-
+          _ChapterImageWidget(
+            character: character,
+            onFavoritePressed: onFavoritePressed,
+            isFavorite: isFavorite,
+          ),
           Expanded(
             child: _ChapterInfoWidget(
               name: character.name,
@@ -58,7 +68,6 @@ class _ChapterInfoWidget extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
         ),
-
         Text(
           type.isNotEmpty ? '$species - $type' : species,
           style: TextStyle(
@@ -74,9 +83,15 @@ class _ChapterInfoWidget extends StatelessWidget {
 }
 
 class _ChapterImageWidget extends StatelessWidget {
-  const _ChapterImageWidget({required this.character});
+  const _ChapterImageWidget({
+    required this.character,
+    required this.onFavoritePressed,
+    required this.isFavorite,
+  });
 
   final Character character;
+  final VoidCallback onFavoritePressed;
+  final bool isFavorite;
 
   _getStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -91,9 +106,7 @@ class _ChapterImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<HomeViewModel>();
-    final isFavorite = model.isFavorite(character.id);
-    final iconColor = isFavorite ? Colors.red : Colors.white;
+    final favoriteIconColor = isFavorite ? Colors.red : Colors.white;
     return Stack(
       children: [
         // фотография персонажа
@@ -140,10 +153,10 @@ class _ChapterImageWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             style: ButtonStyle(
-              iconColor: WidgetStatePropertyAll(iconColor),
+              iconColor: WidgetStatePropertyAll(favoriteIconColor),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            onPressed: () => model.toggleFavorite(character),
+            onPressed: onFavoritePressed,
             icon: const Icon(Icons.favorite),
           ),
         ),
