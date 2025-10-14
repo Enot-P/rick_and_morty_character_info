@@ -1,3 +1,4 @@
+import 'package:entry/entry.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty_character_info/app/domain/models/character_response_model.dart';
@@ -18,7 +19,7 @@ class CharactersListScreen extends StatelessWidget {
       startWidget = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Проверьте соединение с интернетом'),
+          const Center(child: Text('Проверьте соединение с интернетом')),
           ElevatedButton(
             onPressed: () => model.loadNetworkCharacters(),
             child: const Text('Обновить'),
@@ -29,7 +30,7 @@ class CharactersListScreen extends StatelessWidget {
       startWidget = CharactersGridWidget(character: character);
     }
     return Scaffold(
-      body: Center(child: startWidget),
+      body: startWidget,
     );
   }
 }
@@ -84,10 +85,12 @@ class _CharactersGridWidgetState extends State<CharactersGridWidget> {
         ),
         itemCount: widget.character.length,
         itemBuilder: (BuildContext context, int index) {
-          return CharacterCardWidget(
-            character: widget.character[index],
-            onFavoritePressed: () => model.toggleCharacterFavorite(widget.character[index]),
-            isFavorite: model.isFavorite(widget.character[index]),
+          return Entry.scale(
+            child: CharacterCardWidget(
+              character: widget.character[index],
+              onFavoritePressed: () => model.toggleCharacterFavorite(widget.character[index]),
+              isFavorite: model.isFavorite(widget.character[index]),
+            ),
           );
         },
       ),

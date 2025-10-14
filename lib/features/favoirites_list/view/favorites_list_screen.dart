@@ -1,3 +1,4 @@
+import 'package:entry/entry.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty_character_info/app/view/widgets/widgets.dart';
@@ -24,10 +25,12 @@ class FavoritesListScreen extends StatelessWidget {
           ),
           itemCount: sortedCharacters.length,
           itemBuilder: (BuildContext context, int index) {
-            return CharacterCardWidget(
-              character: sortedCharacters[index],
-              onFavoritePressed: () => model.deleteFromFavorite(sortedCharacters[index]),
-              isFavorite: model.isFavorite(sortedCharacters[index]),
+            return Entry.scale(
+              child: CharacterCardWidget(
+                character: sortedCharacters[index],
+                onFavoritePressed: () => model.deleteFromFavorite(sortedCharacters[index]),
+                isFavorite: model.isFavorite(sortedCharacters[index]),
+              ),
             );
           },
         ),
