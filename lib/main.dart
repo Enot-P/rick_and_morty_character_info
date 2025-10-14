@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rick_and_morty_character_info/app/domain/repositories/repositories.dart';
 import 'package:provider/provider.dart';
+import 'package:rick_and_morty_character_info/app/domain/view_models/view_models.dart';
 import 'package:rick_and_morty_character_info/features/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,8 +27,9 @@ Future<void> main() async {
         Provider(create: (context) => CharacterRepository(context.read<Dio>())),
         Provider(create: (context) => CacheRepository(context.read<SharedPreferences>())),
         Provider(create: (context) => DatabaseRepository(context.read<SharedPreferences>())),
-        // Global View Model
+        // Global View Models
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => ThemeViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -39,8 +41,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeScreen(),
+    final model = context.watch<ThemeViewModel>();
+    return MaterialApp(
+      theme: ThemeData(brightness: model.theme),
+      home: const HomeScreen(),
     );
   }
 }
