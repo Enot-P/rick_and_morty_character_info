@@ -10,6 +10,8 @@ class FavoritesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = context.watch<CharactersFavoriteListViewModel>();
     final favoritesCharacters = model.favoritesCharacters;
+    // Сортируем персонажей по имени (алфавитный порядок)
+    final sortedCharacters = List.from(favoritesCharacters)..sort((a, b) => a.name.compareTo(b.name));
 
     return Scaffold(
       body: SafeArea(
@@ -21,18 +23,12 @@ class FavoritesListScreen extends StatelessWidget {
             crossAxisSpacing: 8,
             childAspectRatio: 0.73,
           ),
-          itemCount: favoritesCharacters.length,
+          itemCount: sortedCharacters.length,
           itemBuilder: (BuildContext context, int index) {
-            return Hero(
-              tag: 'character_${favoritesCharacters[index].id}_favorite',
-              child: Material(
-                type: MaterialType.transparency,
-                child: CharacterCardWidget(
-                  character: favoritesCharacters[index],
-                  onFavoritePressed: () => model.toggleFavorite(favoritesCharacters[index]),
-                  isFavorite: model.isFavorite(favoritesCharacters[index]),
-                ),
-              ),
+            return CharacterCardWidget(
+              character: sortedCharacters[index],
+              onFavoritePressed: () => model.deleteFromFavorite(sortedCharacters[index]),
+              isFavorite: model.isFavorite(sortedCharacters[index]),
             );
           },
         ),

@@ -28,7 +28,6 @@ Future<void> main() async {
         Provider(create: (context) => CacheRepository(context.read<SharedPreferences>())),
         Provider(create: (context) => DatabaseRepository(context.read<SharedPreferences>())),
         // Global View Models
-        ChangeNotifierProvider(create: (context) => HomeViewModel()),
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
       ],
       child: const MyApp(),

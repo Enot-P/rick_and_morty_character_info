@@ -13,6 +13,7 @@ class CharactersListViewModel extends ChangeNotifier {
   List<Character> _characters = [];
   List<Character> get characters => List.unmodifiable(_characters);
   List<Character> _favoritesCharacters = [];
+
   String? _nextPage;
   bool _hasNextPage = true;
 
@@ -20,7 +21,7 @@ class CharactersListViewModel extends ChangeNotifier {
     _init();
   }
   Future<void> _init() async {
-    // await _cacheRepo.cleanCache();
+    await _cacheRepo.cleanCache();
     await _loadCacheCharacters();
     await loadNetworkCharacters();
     await _loadFavoritesCharacters();
@@ -50,6 +51,7 @@ class CharactersListViewModel extends ChangeNotifier {
     // Если идет загрузка или страницы закончились
     if (_isLoading || !_hasNextPage) return;
     try {
+      debugPrint('loadNetwork Start $_nextPage');
       _isLoading = true;
       notifyListeners();
       // Загружает первые 20 персонажей, если ссылка не указана
@@ -69,8 +71,15 @@ class CharactersListViewModel extends ChangeNotifier {
   }
 
   Future<void> toggleCharacterFavorite(Character char) async {
-    await _dbRepo.toggleCharacterFavorite(char);
-    _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
+    // Вернет -1 если такого элемента нету
+    final index = _favoritesCharacters.indexWhere((e) => e.id == char.id);
+    if (index >= 0) {
+      _favoritesCharacters.removeAt(index);
+      await _dbRepo.deleteCharacterInFavorite(char);
+    } else {
+      _favoritesCharacters.add(char);
+      await _dbRepo.addCharacterInFavorite(char);
+    }
     notifyListeners();
   }
 

@@ -20,12 +20,6 @@ class DatabaseRepository {
     return characters;
   }
 
-  Future<void> toggleCharacterFavorite(Character char) async {
-    final currentFavorites = await getCharactersFavoriteList();
-    currentFavorites.contains(char) ? currentFavorites.remove(char) : currentFavorites.add(char);
-    await _saveFavoritesList(currentFavorites);
-  }
-
   Future<void> addCharacterInFavorite(Character char) async {
     final currentFavorites = await getCharactersFavoriteList();
 

@@ -4,7 +4,6 @@ import 'package:rick_and_morty_character_info/app/domain/repositories/repositori
 import 'package:rick_and_morty_character_info/app/domain/view_models/theme_view_model.dart';
 import 'package:rick_and_morty_character_info/features/characters_list/characters_list.dart';
 import 'package:rick_and_morty_character_info/features/favoirites_list/favoirites_list.dart';
-import 'package:rick_and_morty_character_info/features/home/home.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,9 +28,15 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  int _selectedIndex = 0;
+  _onTap(index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final modalHome = context.watch<HomeViewModel>();
     final modalTheme = context.watch<ThemeViewModel>();
     final themeIcon = modalTheme.theme == Brightness.light ? const Icon(Icons.light_mode) : const Icon(Icons.dark_mode);
     return Scaffold(
@@ -43,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: widgetOptions.elementAt(modalHome.selectedIndex),
+      body: widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -55,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Favorites',
           ),
         ],
-        currentIndex: modalHome.selectedIndex,
-        onTap: modalHome.changeSelectedIndex,
+        currentIndex: _selectedIndex,
+        onTap: _onTap,
       ),
     );
   }

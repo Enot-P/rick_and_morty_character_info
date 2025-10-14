@@ -49,7 +49,8 @@ class CacheRepository {
       debugPrint('[CacheRepository] No cached characters found');
       return [];
     }
-    final jsonList = jsonDecode(jsonString) as List;
+    final jsonList = jsonDecode(jsonString);
+    if (jsonList is! List) throw Exception('Ошибка формата json');
     final characters = jsonList.map((e) => Character.fromJson(e)).toList();
     debugPrint('[CacheRepository] Retrieved ${characters.length} characters from cache');
     return characters;

@@ -9,12 +9,9 @@ class CharacterRepository {
 
   /// Дает 1 страницу персонажей. В 1 странице 20 персонажей
   Future<CharacterResponse> getCharactersPage({String src = 'character'}) async {
+    // dio сам выплюнет ошибку
     final response = await _dio.get(src);
-    if (response.statusCode == 200) {
-      final result = CharacterResponse.fromJson(response.data);
-      return result;
-    } else {
-      throw Exception("Ошибка при запросе getCharacterList");
-    }
+    final result = CharacterResponse.fromJson(response.data);
+    return result;
   }
 }

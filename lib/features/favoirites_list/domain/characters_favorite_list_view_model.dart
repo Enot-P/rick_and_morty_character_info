@@ -13,9 +13,9 @@ class CharactersFavoriteListViewModel extends ChangeNotifier {
 
   bool isFavorite(Character char) => _favoritesCharacters.contains(char);
 
-  Future<void> toggleFavorite(Character character) async {
-    await _dbRepo.toggleCharacterFavorite(character);
-    _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
+  Future<void> deleteFromFavorite(Character character) async {
+    _favoritesCharacters.removeWhere((e) => e.id == character.id);
+    await _dbRepo.deleteCharacterInFavorite(character);
     notifyListeners();
   }
 
