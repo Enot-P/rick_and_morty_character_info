@@ -5,7 +5,7 @@ import 'package:rick_and_morty_character_info/app/domain/repositories/repositori
 class CharactersFavoriteListViewModel extends ChangeNotifier {
   final DatabaseRepository _dbRepo;
   CharactersFavoriteListViewModel(this._dbRepo) {
-    _init();
+    init();
   }
 
   List<Character> _favoritesCharacters = [];
@@ -19,7 +19,7 @@ class CharactersFavoriteListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _init() async {
+  Future<void> init() async {
     _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
     notifyListeners();
   }

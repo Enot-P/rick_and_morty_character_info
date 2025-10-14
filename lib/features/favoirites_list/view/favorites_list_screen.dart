@@ -12,7 +12,6 @@ class FavoritesListScreen extends StatelessWidget {
     final favoritesCharacters = model.favoritesCharacters;
     // Сортируем персонажей по имени (алфавитный порядок)
     final sortedCharacters = List.from(favoritesCharacters)..sort((a, b) => a.name.compareTo(b.name));
-
     return Scaffold(
       body: SafeArea(
         child: GridView.builder(

@@ -86,9 +86,7 @@ class _CharactersGridWidgetState extends State<CharactersGridWidget> {
         itemBuilder: (BuildContext context, int index) {
           return CharacterCardWidget(
             character: widget.character[index],
-            onFavoritePressed: () => model.toggleCharacterFavorite(
-              widget.character[index],
-            ),
+            onFavoritePressed: () => model.toggleCharacterFavorite(widget.character[index]),
             isFavorite: model.isFavorite(widget.character[index]),
           );
         },

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rick_and_morty_character_info/app/domain/repositories/repositories.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty_character_info/app/domain/view_models/view_models.dart';
+import 'package:rick_and_morty_character_info/features/characters_list/domain/domain.dart';
 import 'package:rick_and_morty_character_info/features/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,10 +41,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<ThemeViewModel>();
-    return MaterialApp(
-      theme: ThemeData(brightness: model.theme),
-      home: const HomeScreen(),
+    final theme = context.select((ThemeViewModel model) => model.theme);
+    // Провайдер используем здесь,чтобы небыло бага при dispose экрана
+    // страницы персонажей
+    return ChangeNotifierProvider(
+      create: (context) => CharactersListViewModel(
+        context.read<CharacterRepository>(),
+        context.read<CacheRepository>(),
+        context.read<DatabaseRepository>(),
+      ),
+      child: MaterialApp(
+        theme: ThemeData(brightness: theme),
+        home: const HomeScreen(),
+      ),
     );
   }
 }

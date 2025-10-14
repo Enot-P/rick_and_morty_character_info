@@ -13,23 +13,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Widget> widgetOptions = [
-    ChangeNotifierProvider(
-      create: (context) => CharactersListViewModel(
-        context.read<CharacterRepository>(),
-        context.read<CacheRepository>(),
-        context.read<DatabaseRepository>(),
-      ),
-      child: const CharactersListScreen(),
-    ),
-    ChangeNotifierProvider(
-      create: (context) => CharactersFavoriteListViewModel(context.read<DatabaseRepository>()),
-      child: const FavoritesListScreen(),
-    ),
-  ];
-
   int _selectedIndex = 0;
-  _onTap(index) {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -39,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final modalTheme = context.watch<ThemeViewModel>();
     final themeIcon = modalTheme.theme == Brightness.light ? const Icon(Icons.light_mode) : const Icon(Icons.dark_mode);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -48,7 +59,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        // Чтобы нельзя было свайпнуть пальцем
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          const CharactersListScreen(),
+          ChangeNotifierProvider(
+            create: (context) => CharactersFavoriteListViewModel(
+              context.read<DatabaseRepository>(),
+            ),
+            child: const FavoritesListScreen(),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
