@@ -21,14 +21,15 @@ class CharactersListViewModel extends ChangeNotifier {
     _init();
   }
   Future<void> _init() async {
-    await _cacheRepo.cleanCache();
+    // await _cacheRepo.cleanCache();
     await _loadCacheCharacters();
     await loadNetworkCharacters();
-    await _loadFavoritesCharacters();
+    await loadFavoritesCharacters();
   }
 
-  Future<void> _loadFavoritesCharacters() async {
+  Future<void> loadFavoritesCharacters() async {
     _favoritesCharacters = await _dbRepo.getCharactersFavoriteList();
+    notifyListeners();
   }
 
   Future<void> _loadCacheCharacters() async {

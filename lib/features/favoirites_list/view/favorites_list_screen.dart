@@ -13,28 +13,46 @@ class FavoritesListScreen extends StatelessWidget {
     final favoritesCharacters = model.favoritesCharacters;
     // Сортируем персонажей по имени (алфавитный порядок)
     final sortedCharacters = List.from(favoritesCharacters)..sort((a, b) => a.name.compareTo(b.name));
+    final startWidget = favoritesCharacters.isEmpty
+        ? const Center(child: Text('Добавте персонажа в избранное'))
+        : _FavoriteCharactersGridWidget(sortedCharacters: sortedCharacters, model: model);
     return Scaffold(
       body: SafeArea(
-        child: GridView.builder(
-          padding: const EdgeInsets.all(10),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 0.73,
-          ),
-          itemCount: sortedCharacters.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Entry.scale(
-              child: CharacterCardWidget(
-                character: sortedCharacters[index],
-                onFavoritePressed: () => model.deleteFromFavorite(sortedCharacters[index]),
-                isFavorite: model.isFavorite(sortedCharacters[index]),
-              ),
-            );
-          },
-        ),
+        child: startWidget,
       ),
+    );
+  }
+}
+
+class _FavoriteCharactersGridWidget extends StatelessWidget {
+  const _FavoriteCharactersGridWidget({
+    required this.sortedCharacters,
+    required this.model,
+  });
+
+  final List sortedCharacters;
+  final CharactersFavoriteListViewModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(10),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 0.73,
+      ),
+      itemCount: sortedCharacters.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Entry.scale(
+          child: CharacterCardWidget(
+            character: sortedCharacters[index],
+            onFavoritePressed: () => model.deleteFromFavorite(sortedCharacters[index]),
+            isFavorite: model.isFavorite(sortedCharacters[index]),
+          ),
+        );
+      },
     );
   }
 }

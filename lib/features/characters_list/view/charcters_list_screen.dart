@@ -53,6 +53,8 @@ class _CharactersGridWidgetState extends State<CharactersGridWidget> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // обновляем список фаворитов
+    context.read<CharactersListViewModel>().loadFavoritesCharacters();
   }
 
   @override
