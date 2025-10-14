@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rick_and_morty_character_info/app/domain/domain.dart';
-import 'package:rick_and_morty_character_info/features/characters_list/domain/characters_list_view_model.dart';
-import 'package:rick_and_morty_character_info/features/characters_list/view/view.dart';
-import 'package:rick_and_morty_character_info/features/favoirites_list/view/view.dart';
+import 'package:rick_and_morty_character_info/app/domain/repositories/repositories.dart';
+import 'package:rick_and_morty_character_info/features/characters_list/characters_list.dart';
+import 'package:rick_and_morty_character_info/features/favoirites_list/favoirites_list.dart';
+import 'package:rick_and_morty_character_info/features/home/home.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,26 +13,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
   final List<Widget> widgetOptions = [
     ChangeNotifierProvider(
-      create: (context) => CharactersListViewModel(context.read<CharacterRepository>()),
+      create: (context) => CharactersListViewModel(
+        context.read<CharacterRepository>(),
+        context.read<CacheRepository>(),
+      ),
       child: const CharactersListScreen(),
     ),
     const FavoritesListScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<HomeViewModel>();
     return Scaffold(
-      body: widgetOptions.elementAt(_selectedIndex),
+      body: widgetOptions.elementAt(model.selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -44,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Favorites',
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: model.selectedIndex,
+        onTap: model.changeSelectedIndex,
       ),
     );
   }

@@ -77,14 +77,14 @@ class Character {
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
-      id: json['id'],
-      name: json['name'],
-      status: json['status'],
-      species: json['species'],
+      id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()), // ← FIX
+      name: json['name'] ?? '',
+      status: json['status'] ?? '',
+      species: json['species'] ?? '',
       type: json['type'] ?? '',
       gender: json['gender'] ?? 'unknown',
-      image: json['image'],
-      origin: json['origin'] != null ? json['origin']['name'] ?? '' : '',
+      image: json['image'] ?? '',
+      origin: json['origin'] is Map ? json['origin']['name'] ?? '' : json['origin'] ?? '', // ← FIX для кеша
     );
   }
 
@@ -97,7 +97,14 @@ class Character {
       'type': type,
       'gender': gender,
       'image': image,
-      'origin': origin,
+      'origin': origin, // Уже строка, не объект
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Character && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

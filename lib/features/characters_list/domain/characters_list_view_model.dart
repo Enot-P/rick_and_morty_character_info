@@ -1,47 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:rick_and_morty_character_info/app/app.dart';
+import 'package:rick_and_morty_character_info/app/domain/models/models.dart';
+import 'package:rick_and_morty_character_info/app/domain/repositories/repositories.dart';
 
 class CharactersListViewModel extends ChangeNotifier {
+  final CharacterRepository _charRepo;
+  final CacheRepository _cacheRepo;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // TODO: Добавить вывод ошибки
-  Object? _error;
-  Object? get error => _error;
-
-  final CharacterRepository _charRepo;
   List<Character> _characters = [];
   List<Character> get characters => List.unmodifiable(_characters);
   String? _nextPage;
   bool _hasNextPage = true;
 
-  CharactersListViewModel(this._charRepo) {
-    loadCharacters();
+  CharactersListViewModel(this._charRepo, this._cacheRepo) {
+    _init();
   }
-  Future<void> loadCharacters() async {
+  Future<void> _init() async {
+    // await _cacheRepo.cleanCache();
+    await _loadCacheCharacters();
+    await loadNetworkCharacters();
+  }
+
+  Future<void> _loadCacheCharacters() async {
+    try {
+      _isLoading = true;
+      _characters = await _cacheRepo.getCharacters();
+      _nextPage = await _cacheRepo.getCharactersNextPage();
+      _hasNextPage = await _cacheRepo.getCharactersHasNextPage() ?? true;
+      if (_characters.isNotEmpty) {
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Ошибка при загрузке из кеша');
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  Future<void> loadNetworkCharacters() async {
     // Если идет загрузка или страницы закончились
     if (_isLoading || !_hasNextPage) return;
     try {
       _isLoading = true;
-      _error = null;
+      notifyListeners();
       // Загружает первые 20 персонажей, если ссылка не указана
-      final response = await _charRepo.getCharactersPage(src: _nextPage ?? 'character');
+      final pageUrl = _nextPage ?? 'character';
+      final response = await _charRepo.getCharactersPage(src: pageUrl);
       _characters += response.results;
       _nextPage = response.info.next;
       if (response.info.next == null) _hasNextPage = false;
-      notifyListeners();
+      await _cacheRepo.saveCharacters(_characters);
+      await _cacheRepo.saveCharactersNextPage(pageUrl, _hasNextPage);
     } catch (e) {
-      _error = e;
+      debugPrint('Ошибка при загрузке персонажей из сети');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  /// Используется для пагинации
-  /// Подгружает новых персонажей ближе к концу прокрутке
-  Future<void> showCharactersByIndex(int index) async {
-    if (_isLoading) return;
-    if (index > _characters.length - 3) await loadCharacters();
   }
 }
