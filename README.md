@@ -2,7 +2,10 @@
 
 ## Видео-обзор
 
-https://www.youtube.com/watch?v=_q0ayVSYLlY
+
+https://github.com/user-attachments/assets/9832e448-53f0-46a7-b4a2-6ada53022fd5
+
+
 
 ## Скриншоты:
 
@@ -43,6 +46,7 @@ cd rick_and_morty_character_info
 ```bash
 flutter pub get
 ```
+
 
 ### 3. Запуск на эмуляторе или устройстве
 
