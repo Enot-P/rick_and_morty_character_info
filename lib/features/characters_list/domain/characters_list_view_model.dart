@@ -42,7 +42,7 @@ class CharactersListViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      debugPrint('Ошибка при загрузке из кеша');
+      Exception(e);
     } finally {
       _isLoading = false;
     }
@@ -64,7 +64,7 @@ class CharactersListViewModel extends ChangeNotifier {
       await _cacheRepo.saveCharacters(_characters);
       await _cacheRepo.saveCharactersNextPage(pageUrl, _hasNextPage);
     } catch (e) {
-      debugPrint('Ошибка при загрузке персонажей из сети');
+      Exception(e);
     } finally {
       _isLoading = false;
       notifyListeners();
